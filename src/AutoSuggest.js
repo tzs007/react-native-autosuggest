@@ -152,9 +152,32 @@ export default class AutoSuggest extends Component {
     return { ...this.getInitialStyles()[styleName], ...this.props[styleName] };
   }
 
-  renderRefreshControl() {
+  renderRefreshControl = () => {
     this.setState({ isLoading: true });
-  }
+  };
+
+  renderRow = () => {
+    (rowData, sectionId, rowId, highlightRow) => (
+      <RowWrapper
+        styles={this.getCombinedStyles("rowWrapperStyles")}
+        isRemoving={this.state.isRemoving}
+      >
+        <TouchableOpacity
+          activeOpacity={0.5 /* when you touch it the text color grimaces */}
+          onPress={() => {
+            this.onItemPress(this.state.results[rowId].text);
+            this.setState({ listViewHeight: 0 });
+            if (this.props.onItemPress)
+              this.props.onItemPress(this.state.results[rowId]);
+          }}
+        >
+          <Text style={this.getCombinedStyles("rowTextStyles")}>
+            {rowData.text}
+          </Text>
+        </TouchableOpacity>
+      </RowWrapper>
+    );
+  };
 
   render() {
     return (
@@ -211,29 +234,6 @@ export default class AutoSuggest extends Component {
             onRefresh={() => this.renderRefreshControl()}
             refreshing={this.state.isLoading}
             initialNumToRender={8}
-            enableEmptySections={true}
-            renderRow={(rowData, sectionId, rowId, highlightRow) => (
-              <RowWrapper
-                styles={this.getCombinedStyles("rowWrapperStyles")}
-                isRemoving={this.state.isRemoving}
-              >
-                <TouchableOpacity
-                  activeOpacity={
-                    0.5 /* when you touch it the text color grimaces */
-                  }
-                  onPress={() => {
-                    this.onItemPress(this.state.results[rowId].text);
-                    this.setState({ listViewHeight: 0 });
-                    if (this.props.onItemPress)
-                      this.props.onItemPress(this.state.results[rowId]);
-                  }}
-                >
-                  <Text style={this.getCombinedStyles("rowTextStyles")}>
-                    {rowData.text}
-                  </Text>
-                </TouchableOpacity>
-              </RowWrapper>
-            )}
           />
         </Animated.View>
       </View>

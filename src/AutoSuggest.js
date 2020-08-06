@@ -156,28 +156,26 @@ export default class AutoSuggest extends Component {
     this.setState({ isLoading: true });
   };
 
-  renderRow = () => {
-    (rowData, sectionId, rowId, highlightRow) => (
-      <RowWrapper
-        styles={this.getCombinedStyles("rowWrapperStyles")}
-        isRemoving={this.state.isRemoving}
+  renderRow = (rowData, sectionId, rowId, highlightRow) => (
+    <RowWrapper
+      styles={this.getCombinedStyles("rowWrapperStyles")}
+      isRemoving={this.state.isRemoving}
+    >
+      <TouchableOpacity
+        activeOpacity={0.5 /* when you touch it the text color grimaces */}
+        onPress={() => {
+          this.onItemPress(this.state.results[rowId].text);
+          this.setState({ listViewHeight: 0 });
+          if (this.props.onItemPress)
+            this.props.onItemPress(this.state.results[rowId]);
+        }}
       >
-        <TouchableOpacity
-          activeOpacity={0.5 /* when you touch it the text color grimaces */}
-          onPress={() => {
-            this.onItemPress(this.state.results[rowId].text);
-            this.setState({ listViewHeight: 0 });
-            if (this.props.onItemPress)
-              this.props.onItemPress(this.state.results[rowId]);
-          }}
-        >
-          <Text style={this.getCombinedStyles("rowTextStyles")}>
-            {rowData.text}
-          </Text>
-        </TouchableOpacity>
-      </RowWrapper>
-    );
-  };
+        <Text style={this.getCombinedStyles("rowTextStyles")}>
+          {rowData.text}
+        </Text>
+      </TouchableOpacity>
+    </RowWrapper>
+  );
 
   render() {
     return (
